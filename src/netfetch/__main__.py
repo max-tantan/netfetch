@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import os
 import platform
-import shutil
 from rich.console import Console
 from rich.table import Table
 from rich.columns import Columns
@@ -55,6 +54,28 @@ def get_pacman_packages():
     except:
         pass
     return "Unknown"
+
+def get_os_info():
+    """Mendeteksi nama distribusi Linux yang aktif."""
+    try:
+        if hasattr(platform, "freedesktop_os_release"):
+            os_release = platform.freedesktop_os_release()
+            return os_release.get("PRETTY_NAME") or os_release.get("NAME") or "Linux"
+    except:
+        pass
+
+    try:
+        with open("/etc/os-release", "r") as f:
+            data = {}
+            for line in f:
+                if "=" in line:
+                    key, value = line.rstrip().split("=", 1)
+                    data[key] = value.strip('"')
+        return data.get("PRETTY_NAME") or data.get("NAME") or "Linux"
+    except:
+        pass
+
+    return platform.system() or "Linux"
 
 def get_cpu_info():
     """Mengambil nama model CPU langsung dari /proc/cpuinfo."""
@@ -191,7 +212,7 @@ def get_system_info():
     
     return {
         "user_host": f"[bold cyan]{username}[/bold cyan][white]@[/white][bold blue]{hostname}[/bold blue]",
-        "OS": "Arch Linux",
+        "OS": get_os_info(),
         "Kernel": platform.release(),
         "Uptime": get_uptime(),
         "Packages": get_pacman_packages(),
