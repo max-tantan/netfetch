@@ -1,0 +1,14 @@
+Metadata-Version: 2.4
+Name: netfetch
+Version: 0.1.0
+Summary: A blazing fast, dependency-free system fetcher tailored for Linux enthusiasts.
+Author-email: Nala <email_kamu@example.com>
+Project-URL: Homepage, https://github.com/username_kamu/netfetch
+Project-URL: Bug Tracker, https://github.com/username_kamu/netfetch/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: POSIX :: Linux
+Classifier: Environment :: Console
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: rich>=13.0.0

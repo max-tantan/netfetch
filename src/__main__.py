@@ -37,11 +37,8 @@ def get_uptime():
     try:
         with open('/proc/uptime', 'r') as f:
             uptime_seconds = float(f.readline().split()[0])
-        
-        # Konversi ke Jam dan Menit
         hours = int(uptime_seconds // 3600)
         minutes = int((uptime_seconds % 3600) // 60)
-        
         if hours > 0:
             return f"{hours}h {minutes}m"
         return f"{minutes} mins"
@@ -53,7 +50,6 @@ def get_pacman_packages():
     try:
         pacman_db_path = '/var/lib/pacman/local'
         if os.path.exists(pacman_db_path):
-            # Menghitung semua sub-direktori di database lokal pacman
             pkgs = len([d for d in os.listdir(pacman_db_path) if os.path.isdir(os.path.join(pacman_db_path, d))])
             return f"{pkgs} (pacman)"
     except:
@@ -70,8 +66,7 @@ def get_cpu_info():
                     replacements = ["(R)", "(TM)", "CPU", "Processor", "Core"]
                     for rep in replacements:
                         cpu_name = cpu_name.replace(rep, "")
-                    cpu_name = " ".join(cpu_name.split())
-                    return cpu_name
+                    return " ".join(cpu_name.split())
     except:
         pass
     return platform.processor() or "Unknown"
@@ -124,23 +119,20 @@ def get_battery_info():
             if d.startswith("BAT"):
                 bat_dir = os.path.join(base_path, d)
                 break
-
     if not bat_dir:
         return "N/A (Desktop)"
-
     try:
         with open(os.path.join(bat_dir, "capacity"), "r") as f:
             capacity = f.read().strip()
         with open(os.path.join(bat_dir, "status"), "r") as f:
             status = f.read().strip()
-        
         status_symbol = "⚡" if status == "Charging" else "🔋"
         return f"{capacity}% [{status_symbol} {status}]"
     except:
         return "Unknown"
 
 def get_gpu_info():
-    """Mendeteksi nama GPU/VGA yang terpasang melalui sysfs card info atau lspci ringan."""
+    """Mendeteksi nama GPU/VGA yang terpasang melalui sysfs card info atau lspci."""
     try:
         gpu_names = []
         drm_path = "/sys/class/drm"
@@ -158,7 +150,6 @@ def get_gpu_info():
                 return ", ".join(list(set(gpu_names)))
     except:
         pass
-
     try:
         import subprocess
         out = subprocess.check_output("lspci | grep -E 'VGA|3D'", shell=True).decode()
@@ -167,7 +158,6 @@ def get_gpu_info():
                 return line.split("VGA compatible controller:")[1].strip().split("(")[0].strip()
     except:
         pass
-    
     return "Unknown"
 
 def get_wm_or_de():
@@ -203,8 +193,8 @@ def get_system_info():
         "user_host": f"[bold cyan]{username}[/bold cyan][white]@[/white][bold blue]{hostname}[/bold blue]",
         "OS": "Arch Linux",
         "Kernel": platform.release(),
-        "Uptime": get_uptime(),              # Data Baru
-        "Packages": get_pacman_packages(),    # Data Baru
+        "Uptime": get_uptime(),
+        "Packages": get_pacman_packages(),
         "Shell": shell,
         "WM/DE": get_wm_or_de(),
         "CPU": get_cpu_info(),         
@@ -228,8 +218,8 @@ def main():
     details = [
         ("OS", info["OS"]),
         ("Kernel", info["Kernel"]),
-        ("Uptime", info["Uptime"]),         # Ditampilkan di bagian atas info software
-        ("Packages", info["Packages"]),     # Ditampilkan di bagian atas info software
+        ("Uptime", info["Uptime"]),
+        ("Packages", info["Packages"]),
         ("Shell", info["Shell"]),
         ("WM/DE", info["WM/DE"]),
         ("CPU", info["CPU"]),         
