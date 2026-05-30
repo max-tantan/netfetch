@@ -4,32 +4,244 @@ import platform
 from rich.console import Console
 from rich.table import Table
 from rich.columns import Columns
-from rich.color import Color
 from rich.text import Text
 
-def get_gradient_logo():
-    """Membuat logo Arch dengan gradasi warna vertikal (Biru ke Cyan)."""
-    raw_logo = [
-        "       /\\       ",
-        "      /  \\      ",
-        "     /\\   \\     ",
-        "    /      \\    ",
-        "   /   _    \\   ",
-        "  /___/ \\____\\  "
-    ]
-    start_color = (30, 50, 220)   # Deep Blue
-    end_color = (0, 230, 240)     # Neon Cyan
+DISTRO_LOGOS = {
+    "arch": {
+        "logo": [
+            "       /\\       ",
+            "      /  \\      ",
+            "     /\\   \\     ",
+            "    /      \\    ",
+            "   /   _    \\   ",
+            "  /___/ \\____\\  ",
+        ],
+        "start_color": (30, 50, 220),
+        "end_color": (0, 230, 240),
+    },
+    "ubuntu": {
+        "logo": [
+            "     .-'''-.     ",
+            "   .'  o o  '.   ",
+            "  /   o .-. o \\  ",
+            " |   o (   ) o | ",
+            " |   o  `-'  o | ",
+            "  \\   o o o o /  ",
+            "   '.       .'   ",
+        ],
+        "start_color": (224, 94, 24),
+        "end_color": (255, 162, 72),
+    },
+    "debian": {
+        "logo": [
+            "      .----.     ",
+            "   .-' .--. '-.  ",
+            "  /  .'    '.  \\ ",
+            " |  /  .--.  \\  |",
+            " |  | (____) |  |",
+            "  \\  \\      /  / ",
+            "   '-. '----' .-'",
+        ],
+        "start_color": (215, 48, 39),
+        "end_color": (247, 111, 0),
+    },
+    "fedora": {
+        "logo": [
+            "     .------.    ",
+            "   .'  .--.  '.  ",
+            "  /   / __ \\   \\ ",
+            " |   | |  | |   |",
+            " |   | |  | |   |",
+            "  \\   \\ '--'   / ",
+            "   '.  '----' .' ",
+        ],
+        "start_color": (51, 103, 214),
+        "end_color": (70, 179, 255),
+    },
+    "manjaro": {
+        "logo": [
+            "  |\\  /|  |\\  /| ",
+            "  | \\/ |  | \\/ | ",
+            "  |    |  |    | ",
+            "  |    |  |    | ",
+            "  |    |  |    | ",
+            "  |    |  |    | ",
+        ],
+        "start_color": (17, 167, 90),
+        "end_color": (83, 208, 123),
+    },
+    "mint": {
+        "logo": [
+            "     .----.     ",
+            "   .' .--. '.   ",
+            "  /  /    \\  \\  ",
+            " |  |  /\\  |  | ",
+            " |  |  \\/  |  | ",
+            "  \\  \\____/  /  ",
+            "   '.______.'   ",
+        ],
+        "start_color": (76, 175, 80),
+        "end_color": (145, 220, 125),
+    },
+    "opensuse": {
+        "logo": [
+            "     .----.     ",
+            "   .' .--. '.   ",
+            "  /  / __ \\  \\  ",
+            " |  | |  | |  | ",
+            " |  | |  | |  | ",
+            "  \\  \\ '--' /  / ",
+            "   '.______.'   ",
+        ],
+        "start_color": (87, 188, 63),
+        "end_color": (182, 229, 87),
+    },
+    "pop": {
+        "logo": [
+            "     .----.     ",
+            "   .'  !!  '.   ",
+            "  /   .--.   \\  ",
+            " |   / __ \\   | ",
+            " |   \\____/   | ",
+            "  \\   '----'  / ",
+            "   '.______.'  ",
+        ],
+        "start_color": (110, 84, 255),
+        "end_color": (170, 129, 255),
+    },
+    "cachyos": {
+        "logo": [
+            "      .------.    ",
+            "   .-'  .--.  '-. ",
+            "  /   .'    '.   \\",
+            " |   /  .--.  \\   |",
+            " |  |  (____)  |  |",
+            " |   \\        /   |",
+            "  \\   '.____.'   / ",
+            "   '-.        .-'  ",
+            "      '------'     ",
+            "     o  o  o       ",
+        ],
+        "start_color": (26, 188, 156),
+        "end_color": (0, 230, 240),
+    },
+    "linux": {
+        "logo": [
+            "    .--------.   ",
+            "   / .------. \\  ",
+            "  / /  >_   \\ \\ ",
+            "  | |        | | ",
+            "  | |        | | ",
+            "  \\ \\        / / ",
+            "   \\ '------' /  ",
+        ],
+        "start_color": (120, 120, 120),
+        "end_color": (220, 220, 220),
+    },
+}
+
+DISTRO_ALIASES = {
+    "popos": "pop",
+    "poposlinux": "pop",
+    "linuxmint": "mint",
+    "linuxmintdebianedition": "mint",
+    "elementary": "ubuntu",
+    "zorin": "ubuntu",
+    "kde": "ubuntu",
+    "neon": "ubuntu",
+    "kali": "debian",
+    "parrot": "debian",
+    "deepin": "debian",
+    "nobara": "fedora",
+    "ultramarine": "fedora",
+    "garuda": "arch",
+    "endeavouros": "arch",
+    "artix": "arch",
+    "cachyoslinux": "cachyos",
+    "cachy": "cachyos",
+    "arcolinux": "arch",
+    "opensusetumbleweed": "opensuse",
+    "opensuseleap": "opensuse",
+    "suse": "opensuse",
+    "rhel": "fedora",
+    "redhat": "fedora",
+    "almalinux": "fedora",
+    "rocky": "fedora",
+}
+
+
+def get_os_release_data():
+    """Mengambil data os-release dari API standar atau file sistem."""
+    try:
+        if hasattr(platform, "freedesktop_os_release"):
+            return platform.freedesktop_os_release()
+    except:
+        pass
+
+    try:
+        data = {}
+        with open("/etc/os-release", "r") as f:
+            for line in f:
+                if "=" in line:
+                    key, value = line.rstrip().split("=", 1)
+                    data[key] = value.strip('"')
+        return data
+    except:
+        return {}
+
+
+def normalize_distro_key(value):
+    return "".join(ch for ch in value.lower() if ch.isalnum())
+
+
+def get_distro_key():
+    """Mencari key logo distro dari ID atau ID_LIKE di os-release."""
+    data = get_os_release_data()
+    candidates = []
+
+    for field in ("ID", "ID_LIKE"):
+        raw_value = data.get(field, "")
+        if raw_value:
+            candidates.extend(raw_value.replace(",", " ").split())
+
+    for candidate in candidates:
+        normalized = normalize_distro_key(candidate)
+        if normalized in DISTRO_LOGOS:
+            return normalized
+        alias = DISTRO_ALIASES.get(normalized)
+        if alias in DISTRO_LOGOS:
+            return alias
+
+    return "linux"
+
+
+def build_gradient_logo(raw_logo, start_color, end_color):
+    """Membuat logo ASCII dengan gradasi warna vertikal."""
     steps = len(raw_logo)
     gradient_text = Text()
 
     for i, line in enumerate(raw_logo):
-        r = int(start_color[0] + (end_color[0] - start_color[0]) * (i / (steps - 1)))
-        g = int(start_color[1] + (end_color[1] - start_color[1]) * (i / (steps - 1)))
-        b = int(start_color[2] + (end_color[2] - start_color[2]) * (i / (steps - 1)))
-        line_color = Color.from_rgb(r, g, b)
-        gradient_text.append(line + "\n", style=f"bold {line_color.name}")
-        
+        if steps <= 1:
+            ratio = 0
+        else:
+            ratio = i / (steps - 1)
+        r = int(start_color[0] + (end_color[0] - start_color[0]) * ratio)
+        g = int(start_color[1] + (end_color[1] - start_color[1]) * ratio)
+        b = int(start_color[2] + (end_color[2] - start_color[2]) * ratio)
+        gradient_text.append(line + "\n", style=f"bold #{r:02x}{g:02x}{b:02x}")
+
     return gradient_text
+
+
+def get_gradient_logo():
+    """Membuat logo distro-aware dengan gradasi warna vertikal."""
+    distro_key = get_distro_key()
+    logo_spec = DISTRO_LOGOS.get(distro_key, DISTRO_LOGOS["linux"])
+    return build_gradient_logo(
+        logo_spec["logo"],
+        logo_spec["start_color"],
+        logo_spec["end_color"],
+    )
 
 def get_uptime():
     """Mengambil durasi uptime sistem langsung dari /proc/uptime."""
@@ -57,25 +269,13 @@ def get_pacman_packages():
 
 def get_os_info():
     """Mendeteksi nama distribusi Linux yang aktif."""
-    try:
-        if hasattr(platform, "freedesktop_os_release"):
-            os_release = platform.freedesktop_os_release()
-            return os_release.get("PRETTY_NAME") or os_release.get("NAME") or "Linux"
-    except:
-        pass
-
-    try:
-        with open("/etc/os-release", "r") as f:
-            data = {}
-            for line in f:
-                if "=" in line:
-                    key, value = line.rstrip().split("=", 1)
-                    data[key] = value.strip('"')
-        return data.get("PRETTY_NAME") or data.get("NAME") or "Linux"
-    except:
-        pass
-
-    return platform.system() or "Linux"
+    os_release = get_os_release_data()
+    return (
+        os_release.get("PRETTY_NAME")
+        or os_release.get("NAME")
+        or platform.system()
+        or "Linux"
+    )
 
 def get_cpu_info():
     """Mengambil nama model CPU langsung dari /proc/cpuinfo."""
