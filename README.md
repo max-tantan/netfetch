@@ -22,6 +22,24 @@ It prints:
 - CPU, GPU, memory, storage, and battery info
 - a colored ASCII logo that adapts to the detected distro
 
+## Preview
+
+```text
+      .------.      demo@yourhost
+   .-'  .--.  '-.   ──────────────────────────
+  /   .'    '.   \  OS       » DemoOS
+ |   /  .--.  \   | Kernel   » 6.8.0-demo
+ |  |  (____)  |  | Uptime   » 3h 24m
+ |   \        /   | Packages » 842 (pacman)
+  \   '.____.'   /  Shell    » bash
+   '-.        .-'   WM/DE    » Hyprland
+      '------'      CPU      » Demo Processor @ 3.20GHz
+     o  o  o        GPU      » Demo Graphics
+                    Memory   » 6.1 GiB / 15.6 GiB (39%)
+                    Storage  » 120.4 GiB / 512.0 GiB (23%) [SSD]
+                    Battery  » 78% [⚡ Charging]
+```
+
 ## Local Use
 
 `netfetch` is meant to be run from a local clone, not from PyPI.
